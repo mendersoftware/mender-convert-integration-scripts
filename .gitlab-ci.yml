@@ -1,5 +1,71 @@
+variables:
+  DOCKER_REPOSITORY: mendersoftware/mender-convert-integration-scripts
+  S3_BUCKET_NAME: mender
+  S3_BUCKET_PATH: "mender-convert/integration"
+
 include:
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-check-commits.yml'
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-check-license.yml'
+
+stages:
+  - test
+  - build
+  - publish
+
+build:
+  stage: build
+  image: docker
+  services:
+    - docker:dind
+  before_script:
+    - apk --update --no-cache add sudo
+  script:
+    - IMAGE_NAME=$DOCKER_REPOSITORY:pr
+      ./docker-create-integration-binaries
+    - docker save $DOCKER_REPOSITORY:pr > image.tar
+    - ls output
+  artifacts:
+    expire_in: 2w
+    paths:
+      - image.tar
+      - output/*
+
+publish:s3:
+  stage: publish
+  image: debian:buster
+  dependencies:
+    - build
+  before_script:
+    - apt update && apt install -yyq awscli
+    - UBOOT_MENDER_BRANCH_RPI=$(grep ^UBOOT_MENDER_BRANCH= build-uboot-rpi.sh | cut -d= -f2)
+    - UBOOT_MENDER_BRANCH_BBB=$(grep ^UBOOT_MENDER_BRANCH= build-uboot-bbb.sh | cut -d= -f2)
+  script:
+    - echo "Publishing beaglebone-black-integration-debian-emmc"
+    - aws s3 cp output/beaglebone-black-integration-debian-emmc-${UBOOT_MENDER_BRANCH_BBB}.tar
+        s3://$S3_BUCKET_NAME/$S3_BUCKET_PATH/beaglebone-black/beaglebone-black-integration-debian-emmc-${UBOOT_MENDER_BRANCH_BBB}.tar
+    - aws s3api put-object-acl --acl public-read --bucket $S3_BUCKET_NAME
+        --key /$S3_BUCKET_PATH/beaglebone-black/beaglebone-black-integration-debian-emmc-${UBOOT_MENDER_BRANCH_BBB}.tar
+    - echo "Publishing beaglebone-black-integration-debian-sdcard"
+    - aws s3 cp output/beaglebone-black-integration-debian-sdcard-${UBOOT_MENDER_BRANCH_BBB}.tar
+        s3://$S3_BUCKET_NAME/$S3_BUCKET_PATH/beaglebone-black/beaglebone-black-integration-debian-sdcard-${UBOOT_MENDER_BRANCH_BBB}.tar
+    - aws s3api put-object-acl --acl public-read --bucket $S3_BUCKET_NAME
+        --key /$S3_BUCKET_PATH/beaglebone-black/beaglebone-black-integration-debian-sdcard-${UBOOT_MENDER_BRANCH_BBB}.tar
+    - echo "Publishing raspberrypi0w-integration"
+    - aws s3 cp output/raspberrypi0w-integration-${UBOOT_MENDER_BRANCH_BBB}.tar
+        s3://$S3_BUCKET_NAME/$S3_BUCKET_PATH/raspberrypi0w/raspberrypi0w-integration--${UBOOT_MENDER_BRANCH_BBB}.tar
+    - aws s3api put-object-acl --acl public-read --bucket $S3_BUCKET_NAME
+        --key /$S3_BUCKET_PATH/raspberrypi0w/raspberrypi0w-integration--${UBOOT_MENDER_BRANCH_BBB}.tar
+    - echo "Publishing raspberrypi3-integration"
+    - aws s3 cp output/raspberrypi3-integration-${UBOOT_MENDER_BRANCH_BBB}.tar
+        s3://$S3_BUCKET_NAME/$S3_BUCKET_PATH/raspberrypi3/raspberrypi3-integration--${UBOOT_MENDER_BRANCH_BBB}.tar
+    - aws s3api put-object-acl --acl public-read --bucket $S3_BUCKET_NAME
+        --key /$S3_BUCKET_PATH/raspberrypi3/raspberrypi3-integration--${UBOOT_MENDER_BRANCH_BBB}.tar
+    - echo "Publishing raspberrypi4-integration"
+    - aws s3 cp output/raspberrypi4-integration-${UBOOT_MENDER_BRANCH_BBB}.tar
+        s3://$S3_BUCKET_NAME/$S3_BUCKET_PATH/raspberrypi4/raspberrypi4-integration--${UBOOT_MENDER_BRANCH_BBB}.tar
+    - aws s3api put-object-acl --acl public-read --bucket $S3_BUCKET_NAME
+        --key /$S3_BUCKET_PATH/raspberrypi4/raspberrypi4-integration--${UBOOT_MENDER_BRANCH_BBB}.tar
+  # only:
+  #   - /^(master|[0-9]+\.[0-9]+\.x)$/
