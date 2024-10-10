@@ -24,6 +24,7 @@ RUN wget -nc -q https://toolchains.bootlin.com/downloads/releases/toolchains/arm
 
 COPY build-uboot-bbb.sh /usr/local/bin/
 COPY build-uboot-rpi.sh /usr/local/bin/
+COPY build-uboot-rpi64.sh /usr/local/bin/
 
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
