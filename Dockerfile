@@ -3,8 +3,8 @@ FROM ubuntu:20.04
 RUN apt-get update && \
 	apt-get install -y \
 		wget \
+		# to compile 32bit ARM
 		gcc-arm-linux-gnueabi \
-		gcc-arm-linux-gnueabihf \
 		git \
 		build-essential \
 		bison \
