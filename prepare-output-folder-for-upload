@@ -16,4 +16,4 @@ ln -f output/raspberrypi3-${UBOOT_MENDER_BRANCH_RPI}.tar.gz output/upload/uboot/
 ln -f output/raspberrypi4-${UBOOT_MENDER_BRANCH_RPI}.tar.gz output/upload/uboot/raspberrypi/raspberrypi4-${UBOOT_MENDER_BRANCH_RPI}.tar.gz
 
 mkdir -p output/upload/uboot/raspberrypi64
-ln -f output/raspberrypi_arm64-${UBOOT_MENDER_BRANCH_RPI64}.tar.gz output/upload/uboot/raspberrypi/raspberrypi_arm64-${UBOOT_MENDER_BRANCH_RPI}.tar.gz
+ln -f output/raspberrypi_arm64-${UBOOT_MENDER_BRANCH_RPI64}.tar.gz output/upload/uboot/raspberrypi64/raspberrypi_arm64-${UBOOT_MENDER_BRANCH_RPI64}.tar.gz
