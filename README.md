@@ -38,23 +38,6 @@ Then run
 This will create a container image that generates the appropriate binaries.  These will be left
 in the output/ directory.
 
-## Vagrant environment for mender-convert-integration-scripts
-
-If you are unable to run docker containers directly on your build system, or simply want a
-completely isolated VM to run this, you can build everything with a Vagrant VM.  We have
-provided a Vagrantfile and script that runs everything automatically.  You need to 
-[install Vagrant](https://www.vagrantup.com/) and [Virtualbox](https://www.virtualbox.org)
-to use this method.
-
-### Running the Vagrant environment
-
-Simply execute the script as follows
-
-```bash
-./run-with-vagrant.sh
-```
-
-
 ## Contributing
 
 We welcome and ask for your contribution. If you would like to contribute to Mender, please read our guide on how to best get started [contributing code or documentation](https://github.com/mendersoftware/mender/blob/master/CONTRIBUTING.md).
