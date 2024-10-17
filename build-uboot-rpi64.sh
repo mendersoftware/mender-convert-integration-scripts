@@ -38,8 +38,6 @@ fi
 
 # Availabile defconfigs:
 #
-#    - rpi_3_defconfig
-#    - rpi_4_defconfig
 #    - rpi_arm64_defconfig
 #
 rpi_defconfig=$1
