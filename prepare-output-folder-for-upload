@@ -5,6 +5,7 @@ set -e
 UBOOT_MENDER_BRANCH_BBB=$(grep ^UBOOT_MENDER_BRANCH= ./build-uboot-bbb.sh | cut -d= -f2)
 UBOOT_MENDER_BRANCH_RPI=$(grep ^UBOOT_MENDER_BRANCH= ./build-uboot-rpi.sh | cut -d= -f2)
 UBOOT_MENDER_BRANCH_RPI64=$(grep ^UBOOT_MENDER_BRANCH= ./build-uboot-rpi64.sh | cut -d= -f2)
+UBOOT_MENDER_BRANCH_RPI64_RPI5=$(grep ^UBOOT_MENDER_BRANCH= ./build-uboot-rpi64-rpi5.sh | cut -d= -f2)
 
 mkdir -p output/upload/uboot/beaglebone
 ln -f output/beaglebone_black_debian_emmc-${UBOOT_MENDER_BRANCH_BBB}.tar.gz output/upload/uboot/beaglebone/beaglebone_black_debian_emmc-${UBOOT_MENDER_BRANCH_BBB}.tar.gz
@@ -17,3 +18,4 @@ ln -f output/raspberrypi4-${UBOOT_MENDER_BRANCH_RPI}.tar.gz output/upload/uboot/
 
 mkdir -p output/upload/uboot/raspberrypi64
 ln -f output/raspberrypi_arm64-${UBOOT_MENDER_BRANCH_RPI64}.tar.gz output/upload/uboot/raspberrypi64/raspberrypi_arm64-${UBOOT_MENDER_BRANCH_RPI64}.tar.gz
+ln -f output/raspberrypi_arm64_rpi5-${UBOOT_MENDER_BRANCH_RPI64_RPI5}.tar.gz output/upload/uboot/raspberrypi64/raspberrypi_arm64_rpi5-${UBOOT_MENDER_BRANCH_RPI64_RPI5}.tar.gz
