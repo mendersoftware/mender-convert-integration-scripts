@@ -34,6 +34,10 @@ cp /work/uboot-mender/integration-binaries/*.tar* /output
 /usr/local/bin/build-uboot-rpi64.sh rpi_arm64_defconfig raspberrypi_arm64
 cp /work/uboot-mender/integration-binaries/*.tar* /output
 
+# Raspberry Pi ARM64 Rpi5
+/usr/local/bin/build-uboot-rpi64-rpi5.sh rpi_arm64_defconfig raspberrypi_arm64_rpi5
+cp /work/uboot-mender/integration-binaries/*.tar* /output
+
 # Beagle Bone Black
 /usr/local/bin/build-uboot-bbb.sh
 cp /work/beaglebone_black*.tar* /output
