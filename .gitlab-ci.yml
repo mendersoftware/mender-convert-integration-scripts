@@ -10,6 +10,9 @@ include:
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-github-status-updates.yml'
 
+default:
+  image: debian:trixie
+
 stages:
   - test
   - build
@@ -29,7 +32,6 @@ build:uboot:
 
 publish:s3:
   stage: publish
-  image: debian:buster
   dependencies:
     - build:uboot
   before_script:
