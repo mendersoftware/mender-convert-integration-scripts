@@ -1,6 +1,9 @@
 variables:
   DOCKER_REPOSITORY: mendersoftware/mender-convert-integration-scripts
   S3_BUCKET_NAME: mender
+  AWS_S3_PUBLISH_ROLE_ARN: "arn:aws:iam::175683096866:role/nt-mender-convert-integration-scripts-s3-publishing"
+  # Don't slow down aws cli commands with connections to IMDS: we're not in AWS
+  AWS_EC2_METADATA_DISABLED: "true"
   DOCKER_VERSION:
     value: "29.1"
     description: "Version of docker to use in pipelines"
@@ -49,14 +52,30 @@ build:uboot:
     paths:
       - output/*
 
+.aws-oidc-auth: &aws-oidc-auth
+  - >
+    export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
+    $(aws sts assume-role-with-web-identity
+    --role-arn ${AWS_S3_PUBLISH_ROLE_ARN}
+    --role-session-name "GitLabRunner-${CI_PROJECT_ID}-${CI_PIPELINE_ID}"
+    --web-identity-token ${AWS_OIDC_TOKEN}
+    --duration-seconds 900
+    --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]'
+    --output text))
+  - aws sts get-caller-identity
+
 publish:s3:
   stage: publish
   dependencies:
     - build:uboot
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
     - apt update && apt install -yyq awscli
+    - *aws-oidc-auth
   script:
     - ./prepare-output-folder-for-upload
     - aws s3 cp --recursive --acl public-read output/upload/ s3://$S3_BUCKET_NAME/mender-convert/
-  only:
-    - /^(master|[0-9]+\.[0-9]+\.x)$/
+  rules:
+    - if: '$CI_COMMIT_REF_NAME =~ /^(master|[0-9]+\.[0-9]+\.x)$/'
