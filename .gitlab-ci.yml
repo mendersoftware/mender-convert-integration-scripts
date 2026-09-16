@@ -20,6 +20,8 @@ variables:
 include:
   - component: gitlab.com/Northern.tech/Mender/mendertesting/commit-lint@master
   - project: 'Northern.tech/Mender/mendertesting'
+    file: 'qa-common/retry.yml'
+  - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-check-license.yml'
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-github-status-updates.yml'
@@ -38,6 +40,8 @@ build:uboot:
   services:
     - name: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/docker:${DOCKER_VERSION}-dind
       alias: docker
+  before_script:
+    - !reference [.qa-common-wait-for-dind, before_script]
   script:
     - IMAGE_NAME=$DOCKER_REPOSITORY:pr ./docker-create-integration-binaries
   artifacts:
